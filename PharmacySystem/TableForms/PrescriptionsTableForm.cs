@@ -29,7 +29,7 @@ namespace PharmacySystem
 
         private void newRowButton_Click(object sender, EventArgs e)
         {
-            NewPrescriptionForm newPrescriptionForm = new NewPrescriptionForm();
+            NewPrescriptionForm newPrescriptionForm = new NewPrescriptionForm(ref db);
             newPrescriptionForm.ShowDialog();
         }
 

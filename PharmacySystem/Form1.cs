@@ -1,6 +1,8 @@
 using MySql.Data.MySqlClient;
 using PharmacySystem.TableForms;
 using System.Data;
+using static PharmacySystem.MyDB;
+using static System.ComponentModel.Design.ObjectSelectorEditor;
 
 namespace PharmacySystem
 {
@@ -80,12 +82,13 @@ namespace PharmacySystem
 
         #region ActionButtons
 
+        // Получение списка покупателей, ожидающих медикаменты:
         private void action1Button_Click(object sender, EventArgs e)
         {
-            string query = "SELECT Customers.Name, COUNT(*) as WaitingCustomersCount " +
+            string query = "SELECT Customers.Name AS ФИО_Покупателя, COUNT(*) AS Количество_заказов_в_ожидании " +
                 "FROM Customers " +
                 "JOIN Orders ON Customers.CustomerID = Orders.CustomerID " +
-                "JOIN Medicines ON Orders.MedicineID = Medicines.MedicineID  " +
+                "JOIN Medicines ON Orders.MedicineID = Medicines.MedicineID " +
                 "WHERE Orders.Status = 1 " +
                 "GROUP BY Customers.Name;";
 
@@ -101,12 +104,13 @@ namespace PharmacySystem
             db.CloseConnection();
 
             Clear();
-            ShowOutput(ref dt);
+            ShowOutput(ref dt, $"Всего покупателей ожидают: {dt.Rows.Count}");
         }
 
+        // Получение списка покупателей, ожидающих медикаменты по указанной категории:
         private void action2Button_Click(object sender, EventArgs e)
         {
-            string query = "SELECT Customers.Name, COUNT(*) as WaitingCustomersCount " +
+            string query = "SELECT Customers.Name AS ФИО_Покупателя, COUNT(*) AS Количество_заказов_в_ожидании " +
                 "FROM Customers " +
                 "JOIN Orders ON Customers.CustomerID = Orders.CustomerID " +
                 "JOIN Medicines ON Orders.MedicineID = Medicines.MedicineID " +
@@ -128,16 +132,17 @@ namespace PharmacySystem
             db.CloseConnection();
 
             Clear();
-            ShowOutput(ref dt);
+            ShowOutput(ref dt, $"Всего покупателей ожидают: {dt.Rows.Count}");
         }
 
+        // Получение наиболее часто используемых медикаментов:
         private void action3Button_Click(object sender, EventArgs e)
         {
-            string query = "SELECT Medicines.Name, COUNT(*) as UsageCount " +
-                "FROM Medicines " +
-                "JOIN Prescriptions ON Medicines.MedicineID = Prescriptions.MedicineID " +
+            string query = "SELECT Medicines.Name AS Название_препарата, SUM(UsageStatistics.VolumeUsed) AS Куплено_всего " +
+                "FROM UsageStatistics " +
+                "JOIN Medicines ON UsageStatistics.MedicineID = Medicines.MedicineID " +
                 "GROUP BY Medicines.Name " +
-                "ORDER BY UsageCount DESC " +
+                "ORDER BY Куплено_всего DESC " +
                 "LIMIT 10;";
 
             db.OpenConnection();
@@ -152,17 +157,18 @@ namespace PharmacySystem
             db.CloseConnection();
 
             Clear();
-            ShowOutput(ref dt);
+            ShowOutput(ref dt, "");
         }
 
+        // Получение наиболее часто используемых медикаментов по категории:
         private void action4Button_Click(object sender, EventArgs e)
         {
-            string query = "SELECT Medicines.Name, COUNT(*) as UsageCount " +
-                "FROM Medicines " +
-                "JOIN Prescriptions ON Medicines.MedicineID = Prescriptions.MedicineID " +
+            string query = "SELECT Medicines.Name AS Название_препарата, SUM(UsageStatistics.VolumeUsed) AS Куплено_всего " +
+                "FROM UsageStatistics " +
+                "JOIN Medicines ON UsageStatistics.MedicineID = Medicines.MedicineID " +
                 "WHERE Medicines.Type = @type " +
                 "GROUP BY Medicines.Name " +
-                "ORDER BY UsageCount DESC " +
+                "ORDER BY Куплено_всего DESC " +
                 "LIMIT 10;";
 
             int type = int.Parse(action4TypeComboBox.SelectedValue.ToString());
@@ -180,12 +186,13 @@ namespace PharmacySystem
             db.CloseConnection();
 
             Clear();
-            ShowOutput(ref dt);
+            ShowOutput(ref dt, "");
         }
 
+        // Получение объема используемых веществ:
         private void action5Button_Click(object sender, EventArgs e)
         {
-            string query = "SELECT SUM(UsageStatistics.VolumeUsed) as TotalVolume " +
+            string query = "SELECT SUM(UsageStatistics.VolumeUsed) AS Выпущено_всего " +
                 "FROM UsageStatistics " +
                 "JOIN Medicines ON UsageStatistics.MedicineID = Medicines.MedicineID " +
                 "WHERE UsageStatistics.DateUsed BETWEEN @startDate AND @endDate AND UsageStatistics.MedicineID = @medId;";
@@ -210,12 +217,13 @@ namespace PharmacySystem
             db.CloseConnection();
 
             Clear();
-            ShowOutput(ref dt);
+            ShowOutput(ref dt, "");
         }
 
-        private void aaction6Button_Click(object sender, EventArgs e)
+        // Медикаменты, достигшие критической нормы:
+        private void action6Button_Click(object sender, EventArgs e)
         {
-            string query = "SELECT Medicines.Name, MedicinesTypes.Name as Type " +
+            string query = "SELECT Medicines.Name AS Название_препарата, MedicinesTypes.Name AS Категория_препарата, Medicines.Quantity AS Препаратов_осталось " +
                 "FROM Medicines " +
                 "JOIN MedicinesTypes ON Medicines.Type = MedicinesTypes.TypeID " +
                 "WHERE Quantity <= CriticalLevel;";
@@ -232,13 +240,15 @@ namespace PharmacySystem
             db.CloseConnection();
 
             Clear();
-            ShowOutput(ref dt);
+            ShowOutput(ref dt, "");
         }
 
+        // Перечень заказов в ожидании:
         private void action7Button_Click(object sender, EventArgs e)
         {
-            string query = "SELECT Orders.OrderID, Customers.Name, Orders.Status, COUNT(*) AS OrdersCount " +
+            string query = "SELECT Orders.OrderID AS ID, Customers.Name AS ФИО_Покупателя, OrderStatuses.StatusName AS Статус " +
                 "FROM Orders " +
+                "JOIN OrderStatuses ON Orders.Status = OrderStatuses.StatusID " +
                 "JOIN Customers ON Orders.CustomerID = Customers.CustomerID " +
                 "WHERE Status = 1 " +
                 "GROUP BY OrderID DESC;";
@@ -255,17 +265,18 @@ namespace PharmacySystem
             db.CloseConnection();
 
             Clear();
-            ShowOutput(ref dt);
+            ShowOutput(ref dt, $"Всего заказов в ожидании: {dt.Rows.Count}");
         }
 
+        // Информация о частых заказчиках по конкретному препарату:
         private void action8Button_Click(object sender, EventArgs e)
         {
-            string query = "SELECT Customers.Name, COUNT(*) as OrderCount " +
+            string query = "SELECT Customers.Name AS ФИО_Покупателя, COUNT(*) AS Количество_заказов " +
                 "FROM Customers " +
                 "JOIN Orders ON Customers.CustomerID = Orders.CustomerID " +
                 "WHERE Orders.MedicineID = @medId " +
                 "GROUP BY Customers.Name " +
-                "ORDER BY OrderCount DESC;";
+                "ORDER BY Количество_заказов DESC;";
 
             int medicineId = int.Parse(action8MedicineComboBox.SelectedValue.ToString());
 
@@ -282,18 +293,19 @@ namespace PharmacySystem
             db.CloseConnection();
 
             Clear();
-            ShowOutput(ref dt);
+            ShowOutput(ref dt, "");
         }
 
+        // Информация о частых заказчиках по категории:
         private void action9Button_Click(object sender, EventArgs e)
         {
-            string query = "SELECT Customers.Name, COUNT(*) as OrderCount " +
+            string query = "SELECT Customers.Name AS ФИО_Покупателя, COUNT(*) AS Количество_заказов " +
                 "FROM Customers " +
                 "JOIN Orders ON Customers.CustomerID = Orders.CustomerID " +
                 "JOIN Medicines ON Orders.MedicineID = Medicines.MedicineID " +
                 "WHERE Medicines.Type = @type " +
                 "GROUP BY Customers.Name " +
-                "ORDER BY OrderCount DESC;";
+                "ORDER BY Количество_заказов DESC;";
 
             int type = int.Parse(action9TypeComboBox.SelectedValue.ToString());
 
@@ -310,12 +322,13 @@ namespace PharmacySystem
             db.CloseConnection();
 
             Clear();
-            ShowOutput(ref dt);
+            ShowOutput(ref dt, "");
         }
 
+        //Информация о конкретном лекарстве:
         private void action10Button_Click(object sender, EventArgs e)
         {
-            string query = "SELECT MedicinesTypes.Name AS Type, Medicines.Name, Medicines.CriticalLevel, Components.ComponentName as Component, Medicines.Price, Medicines.Quantity " +
+            string query = "SELECT MedicinesTypes.Name AS Категория_препарата, Medicines.Name AS Название_препарата, Medicines.CriticalLevel AS Уровень_тревоги, Components.ComponentName as Компонент, Medicines.Price AS Цена, Medicines.Quantity AS В_наличии " +
                 "FROM Medicines " +
                 "JOIN MedicinesTypes ON Medicines.Type = MedicinesTypes.TypeID " +
                 "JOIN MedicineComponent ON Medicines.MedicineID = MedicineComponent.MedicineComponentID " +
@@ -337,12 +350,13 @@ namespace PharmacySystem
             db.CloseConnection();
 
             Clear();
-            ShowOutput(ref dt);
+            ShowOutput(ref dt, "");
         }
 
+        // Справка о конкретном лекарстве:
         private void action11Button_Click(object sender, EventArgs e)
         {
-            string query = "SELECT b.Name AS CustomerName, mt.Name AS MedicineType, m.Name AS MedicineName, p.Quantity AS QuantityPrescripted, p.Instructions, c.ComponentName, d.Name AS DoctorName, d.Signature, d.Stamp " +
+            string query = "SELECT b.Name AS ФИО_Покупателя, mt.Name AS Категория_препарата, m.Name AS Название_препарата, p.Quantity AS Количество_по_рецепту, p.Instructions AS Инструкция, c.ComponentName AS Компонент, d.Name AS ФИО_Врача, d.Signature AS Подпись, d.Stamp AS Печать " +
                 "FROM Prescriptions p " +
                 "JOIN Medicines m ON p.MedicineID = m.MedicineID " +
                 "JOIN MedicineComponent mc ON p.MedicineID = mc.MedicineID " +
@@ -367,12 +381,13 @@ namespace PharmacySystem
             db.CloseConnection();
 
             Clear();
-            ShowOutput(ref dt);
+            ShowOutput(ref dt, "");
         }
 
+        // Предложение аналогов по действующему веществу:
         private void action12Button_Click(object sender, EventArgs e)
         {
-            string query = "SELECT Medicines.Name, MedicinesTypes.Name AS Type " +
+            string query = "SELECT Medicines.Name AS Название_препарата, MedicinesTypes.Name AS Категория_препарата " +
                 "FROM Medicines " +
                 "JOIN MedicineComponent ON Medicines.MedicineID = MedicineComponent.MedicineID " +
                 "JOIN MedicinesTypes ON Medicines.Type = MedicinesTypes.TypeID " +
@@ -396,7 +411,7 @@ namespace PharmacySystem
             db.CloseConnection();
 
             Clear();
-            ShowOutput(ref dt);
+            ShowOutput(ref dt, "");
         }
 
         #endregion
@@ -443,9 +458,9 @@ namespace PharmacySystem
 
         }
 
-        private void ShowOutput(ref DataTable dt)
+        private void ShowOutput(ref DataTable dt, string message)
         {
-            OutputTableForm outputTableForm = new OutputTableForm(ref dt);
+            OutputTableForm outputTableForm = new OutputTableForm(ref dt, message);
             outputTableForm.ShowDialog();
         }
     }

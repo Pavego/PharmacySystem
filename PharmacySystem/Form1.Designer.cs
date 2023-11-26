@@ -215,7 +215,7 @@
             aaction6Button.TabIndex = 13;
             aaction6Button.Text = "Получить";
             aaction6Button.UseVisualStyleBackColor = true;
-            aaction6Button.Click += aaction6Button_Click;
+            aaction6Button.Click += action6Button_Click;
             // 
             // action7Button
             // 

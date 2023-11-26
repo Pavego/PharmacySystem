@@ -28,7 +28,7 @@ namespace PharmacySystem
 
         private void newRowButton_Click(object sender, EventArgs e)
         {
-            NewCustomerForm newCustomerForm = new NewCustomerForm();
+            NewCustomerForm newCustomerForm = new NewCustomerForm(ref db);
             newCustomerForm.ShowDialog();
         }
 

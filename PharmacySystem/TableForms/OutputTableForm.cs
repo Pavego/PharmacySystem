@@ -14,9 +14,13 @@ namespace PharmacySystem
     {
         DataTable output;
 
-        public OutputTableForm(ref DataTable dt)
+        string message;
+
+        public OutputTableForm(ref DataTable dt, string message)
         {
             output = dt;
+
+            this.message = message;
 
             InitializeComponent();
         }
@@ -24,6 +28,12 @@ namespace PharmacySystem
         protected override void OnShown(EventArgs e)
         {
             outputDataGridView.DataSource = output;
+
+            if (message != "")
+            {
+                MessageBox.Show(message);
+            }
+
             base.OnShown(e);
         }
     }

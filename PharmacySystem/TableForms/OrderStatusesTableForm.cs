@@ -28,7 +28,7 @@ namespace PharmacySystem.TableForms
 
         private void newRowButton_Click(object sender, EventArgs e)
         {
-            NewOrderStatusForm newOrderStatusForm = new NewOrderStatusForm();
+            NewOrderStatusForm newOrderStatusForm = new NewOrderStatusForm(ref db);
             newOrderStatusForm.ShowDialog();
         }
 

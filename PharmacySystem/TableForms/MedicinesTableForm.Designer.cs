@@ -33,11 +33,11 @@
             newRowButton = new Button();
             saveButton = new Button();
             ID = new DataGridViewTextBoxColumn();
-            CriticalLevel = new DataGridViewTextBoxColumn();
-            Quantity = new DataGridViewTextBoxColumn();
-            Price = new DataGridViewTextBoxColumn();
             MedicineName = new DataGridViewTextBoxColumn();
             Type = new DataGridViewComboBoxColumn();
+            Price = new DataGridViewTextBoxColumn();
+            CriticalLevel = new DataGridViewTextBoxColumn();
+            Quantity = new DataGridViewTextBoxColumn();
             ((System.ComponentModel.ISupportInitialize)splitContainer1).BeginInit();
             splitContainer1.Panel1.SuspendLayout();
             splitContainer1.Panel2.SuspendLayout();
@@ -68,7 +68,7 @@
             // dataGridView1
             // 
             dataGridView1.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dataGridView1.Columns.AddRange(new DataGridViewColumn[] { ID, CriticalLevel, Quantity, Price, MedicineName, Type });
+            dataGridView1.Columns.AddRange(new DataGridViewColumn[] { ID, MedicineName, Type, Price, CriticalLevel, Quantity });
             dataGridView1.Dock = DockStyle.Fill;
             dataGridView1.Location = new Point(0, 0);
             dataGridView1.Name = "dataGridView1";
@@ -104,24 +104,6 @@
             ID.Name = "ID";
             ID.ReadOnly = true;
             // 
-            // CriticalLevel
-            // 
-            CriticalLevel.DataPropertyName = "CriticalLevel";
-            CriticalLevel.HeaderText = "Уровень тревоги";
-            CriticalLevel.Name = "CriticalLevel";
-            // 
-            // Quantity
-            // 
-            Quantity.DataPropertyName = "Quantity";
-            Quantity.HeaderText = "Количество";
-            Quantity.Name = "Quantity";
-            // 
-            // Price
-            // 
-            Price.DataPropertyName = "Price";
-            Price.HeaderText = "Цена";
-            Price.Name = "Price";
-            // 
             // MedicineName
             // 
             MedicineName.DataPropertyName = "Name";
@@ -133,6 +115,24 @@
             Type.DataPropertyName = "Type";
             Type.HeaderText = "Тип";
             Type.Name = "Type";
+            // 
+            // Price
+            // 
+            Price.DataPropertyName = "Price";
+            Price.HeaderText = "Цена";
+            Price.Name = "Price";
+            // 
+            // CriticalLevel
+            // 
+            CriticalLevel.DataPropertyName = "CriticalLevel";
+            CriticalLevel.HeaderText = "Уровень тревоги";
+            CriticalLevel.Name = "CriticalLevel";
+            // 
+            // Quantity
+            // 
+            Quantity.DataPropertyName = "Quantity";
+            Quantity.HeaderText = "Количество";
+            Quantity.Name = "Quantity";
             // 
             // MedicinesTableForm
             // 
@@ -157,10 +157,10 @@
         private Button newRowButton;
         private Button saveButton;
         private DataGridViewTextBoxColumn ID;
-        private DataGridViewTextBoxColumn CriticalLevel;
-        private DataGridViewTextBoxColumn Quantity;
-        private DataGridViewTextBoxColumn Price;
         private DataGridViewTextBoxColumn MedicineName;
         private DataGridViewComboBoxColumn Type;
+        private DataGridViewTextBoxColumn Price;
+        private DataGridViewTextBoxColumn CriticalLevel;
+        private DataGridViewTextBoxColumn Quantity;
     }
 }
